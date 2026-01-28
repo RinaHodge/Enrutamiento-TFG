@@ -12,7 +12,7 @@ def Dijkstra(grafo, nodo_inicio):
         dist (dict): Diccionario con las distancias mínimas desde el nodo de inicio a cada nodo.
         prev (dict): Diccionario con los predecesores de cada nodo en la ruta más corta.
     """
-    
+
     dist = {}
     prev = {}
 
@@ -36,3 +36,29 @@ def Dijkstra(grafo, nodo_inicio):
                 prev[vecino] = u
 
     return dist, prev
+
+def reconstruir_ruta(prev, nodo_inicio, nodo_fin):
+    """
+    Reconstruye la ruta más corta desde el nodo de inicio al nodo de fin utilizando el diccionario de predecesores.
+
+    Argumentos:
+        prev (dict): Diccionario con los predecesores de cada nodo en la ruta más corta.
+        nodo_inicio (str): Nodo de inicio.
+        nodo_fin (str): Nodo de fin.
+
+    Returns:
+        ruta (list): Lista que representa la ruta más corta desde el nodo de inicio al nodo de fin.
+    """
+    ruta = []
+    actual = nodo_fin
+
+    while actual is not None:
+        ruta.append(actual)
+        actual = prev[actual]
+
+    ruta.reverse()  # Invertir la ruta para obtener el orden correcto desde inicio a fin
+
+    if ruta[0] == nodo_inicio:
+        return ruta
+    else:
+        return []  # No hay ruta desde nodo_inicio a nodo_fin

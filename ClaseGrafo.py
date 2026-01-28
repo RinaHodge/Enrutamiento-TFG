@@ -3,7 +3,7 @@ class Grafo:
         self.grafo = {}         # Diccionario para almacenar los vértices y sus aristas
         self.num_vertices = 0
 
-    def agregar_arista(self, origen, destino, capacidad):
+    def agregar_arista(self, origen, destino, coste):
         """
         Agrega una arista al grafo con una capacidad dada.
 
@@ -14,22 +14,24 @@ class Grafo:
         """
         if origen not in self.grafo:
             self.grafo[origen] = {}
-            self.num_vertices += 1
 
-        self.grafo[origen][destino] = capacidad
+        if destino not in self.grafo:
+            self.grafo[destino] = {}
 
-    def cargar_desde_archivo(self, nombre_topologia, id_trafico):
+        self.grafo[origen][destino] = coste
+        self.num_vertices = len(self.grafo)
+
+
+    def cargar_desde_archivo(self, nombre_topologia):
         """
         Carga la matriz de capacidades y la matriz de tráfico.
 
         Argumentos:
             nombre_topologia (str): Nombre de la topología elegida. Proviene del menú inicial.
-            id_trafico (str): Identificador del archivo de tráfico (TM1-TM5). Proviene del menú inicial.
         """
         # Implementación para cargar la matriz de capacidades y la matriz de tráfico desde archivos
 
         ruta_capacidades = f"Topologias/Capacidades/{nombre_topologia}/{nombre_topologia}CapMatrix.csv"
-        ruta_trafico = f"Topologias/Matrices_Trafico/{nombre_topologia}/{nombre_topologia}{id_trafico}.csv"
 
         print (f"Cargando matriz de capacidades desde: {ruta_capacidades}")
         try: 
@@ -41,22 +43,30 @@ class Grafo:
                     valores = linea.strip().split(',')
 
                     for j, valor in enumerate(valores):         #Procesar la columna
-                        capacidad = float(valor)
+                        coste = float(valor)
 
                         #Si la capacidad es mayor que 0, agregar la arista al grafo. Si es menor, no hay enlace
-                        if capacidad > 0:
-                            self.agregar_arista(i, j, capacidad)
+                        if coste > 0:
+                            self.agregar_arista(self.mapeo_letra(i), self.mapeo_letra(j), coste)
         except FileNotFoundError:
             print(f"Error: No se encontró el archivo de capacidades en la ruta: {ruta_capacidades}")
-        
-        print (f"Cargando matriz de tráfico desde: {ruta_trafico}")
         pass
+    
+    def mapeo_letra(self, indice):
+        """
+        Mapea un índice numérico a una letra correspondiente (0 -> A, 1 -> B, etc.).
 
+        Argumentos:
+            indice (int): Índice numérico a mapear.
+
+        Returns:
+            str: Letra correspondiente al índice.
+        """
+        return chr(ord('A') + indice)
+    
     def mostrar_diccionario(self):
         """
         Muestra el diccionario del grafo.
         """
-        for origen in self.grafo:
-            for destino in self.grafo[origen]:
-                capacidad = self.grafo[origen][destino]
-                print(f"Arista desde {origen} hasta {destino} con capacidad {capacidad}")
+        for origen, vecinos in self.grafo.items():
+            print(f"{origen} -> {vecinos}")

@@ -16,7 +16,7 @@ def menu_inicial() -> tuple:
 
     while True:
         print("\n--- MENÚ DE ENRUTAMIENTO ---")
-        print("1. Abeline")
+        print("1. Abilene")
         print("2. Geant")
         print("3. Germany")
         print("4. Nobel")
@@ -25,7 +25,7 @@ def menu_inicial() -> tuple:
         opcion = input("Seleccione la topología a enrutar:")
 
         if opcion == '1':
-            nombre = "Abeline"
+            nombre = "Abilene"
         elif opcion == '2':
             nombre = "Geant"
         elif opcion == '3':

@@ -52,6 +52,33 @@ class Grafo:
             print(f"Error: No se encontró el archivo de capacidades en la ruta: {ruta_capacidades}")
         pass
     
+    def eliminar_arista(grafo, origen, destino):
+        """
+        Elimina una arista del grafo.
+
+        Argumentos:
+            grafo (Grafo): El grafo del cual se eliminará la arista.
+            origen (node): Nodo de origen de la arista a eliminar.
+            destino (node): Nodo de destino de la arista a eliminar.
+        """
+        if origen in grafo.grafo and destino in grafo.grafo[origen]:
+            del grafo.grafo[origen][destino]
+
+    def eliminar_nodo(grafo, nodo):
+        """
+        Elimina un nodo y todas sus aristas asociadas del grafo.
+
+        Argumentos:
+            grafo (Grafo): El grafo del cual se eliminará el nodo.
+            nodo (node): Nodo a eliminar.
+        """
+        if nodo in grafo.grafo:
+            del grafo.grafo[nodo]
+
+        for origen in grafo.grafo:
+            if nodo in grafo.grafo[origen]:
+                del grafo.grafo[origen][nodo]
+
     def mapeo_letra(self, indice):
         """
         Mapea un índice numérico a una letra correspondiente (0 -> A, 1 -> B, etc.).
@@ -70,3 +97,20 @@ class Grafo:
         """
         for origen, vecinos in self.grafo.items():
             print(f"{origen} -> {vecinos}")
+
+    def copiar_grafo(grafo):
+        """
+        Crea una copia del grafo dado.
+
+        Argumentos:
+            grafo (Grafo): El grafo a copiar.
+        Returns:
+            grafo_copia (Grafo): Una copia del grafo original.
+        """
+
+        grafo_copia = Grafo()
+        for origen, vecinos in grafo.grafo.items():
+            for destino, coste in vecinos.items():
+                grafo_copia.agregar_arista(origen, destino, coste)
+        return grafo_copia
+    

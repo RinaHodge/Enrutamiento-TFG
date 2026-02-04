@@ -1,6 +1,9 @@
+from asyncio import graph
+
 class Trafico:
     def __init__(self):
         self.matriz_trafico = []  # Matriz de tráfico (lista de listas)
+        self.matriz_actual = []   # Matriz actual del trafico
 
     def cargar_matriz_trafico(self, nombre_topologia, id_trafico):
         """

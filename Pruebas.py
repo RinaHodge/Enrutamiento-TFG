@@ -2,41 +2,90 @@ import random
 import ClaseGrafo as g
 import Funciones as f
 
-def generarGrafo(): 
-    """
-    Genera un grafo de ejemplo con aristas y costes aleatorios.
-    Returns:
-        Grafo: Instancia de la clase Grafo con aristas agregadas.
-    """
-    grafo = g.Grafo()       #Crear instancia del grafo
+def ejecutar_k_shortest_paths(grafo, origen, destino, k):
+    
+    print(f"\n{'='*60}")
+    print(f"PRUEBA: Algoritmo de los {k} mejores caminos (Yen's K-Shortest Paths)")
+    print(f"Buscando los {k} mejores caminos de {origen} a {destino}")
+    print(f"{'-'*60}")
 
-    grafo.agregar_arista('A', 'B', random.randint(1,10))
-    grafo.agregar_arista('A', 'C', random.randint(1,10))
-    grafo.agregar_arista('B', 'C', random.randint(1,10))
-    grafo.agregar_arista('B', 'D', random.randint(1,10))
-    grafo.agregar_arista('C', 'D', random.randint(1,10))
-    return grafo
-
-def probarDijkstra():
-    """
-    Prueba el algoritmo de Dijkstra en un grafo de ejemplo.
-    """
-    print("Probando Dijkstra en un grafo de ejemplo:")
-    grafo = generarGrafo()
     grafo.mostrar_diccionario()
+    
+    rutas = f.yen_k_shortest_paths(grafo, origen, destino, k)
+    if not rutas:
+        print(f"No se encontraron rutas de {origen} a {destino}.")
+        return
+    
+    for i, ruta in enumerate(rutas):
+        coste = f.calcular_coste_ruta(grafo.grafo, ruta)
+        print(f"Ruta {i + 1}: {' -> '.join(ruta)} | Coste total: {coste}")
+    
 
-    nodo_inicio = 'A'
-    dist, prev = f.Dijkstra(grafo.grafo, nodo_inicio)
+# ---------------------------------------------------------------------------------------------
+# CASO 1. Resultado esperado: El mejor camino es S -> B -> T con coste 10
+# ---------------------------------------------------------------------------------------------
+def caso1_shortest_paths():
+    grafo = g.Grafo()
+    
+    grafo.agregar_arista('S', 'A', 10) 
+    grafo.agregar_arista('A', 'S', 50) 
+    
+    grafo.agregar_arista('A', 'T', 10)
+    grafo.agregar_arista('T', 'A', 50)
 
-    print(f"Distancias desde el nodo {nodo_inicio}:")
-    for nodo in dist:
-        print(f"Distancia a {nodo}: {dist[nodo]}")
+    grafo.agregar_arista('S', 'B', 5)
+    grafo.agregar_arista('B', 'S', 50)
+    
+    grafo.agregar_arista('B', 'T', 5)
+    grafo.agregar_arista('T', 'B', 50)
 
-    print(f"Predecesores en las rutas más cortas desde {nodo_inicio}:")
-    for nodo in prev:
-        print(f"Predecesor de {nodo}: {prev[nodo]}")
+    grafo.agregar_arista('S', 'T', 100)
+    grafo.agregar_arista('T', 'S', 100)
+    
+    ejecutar_k_shortest_paths(grafo, 'S', 'T', k=3)
 
-    # Reconstruir y mostrar la ruta más corta desde A a D
-    print("Reconstruyendo la ruta más corta desde A hasta D:")
-    ruta = f.reconstruir_ruta(prev, 'A', 'D')
-    print("Ruta más corta de A a D:", " -> ".join(ruta))
+# ---------------------------------------------------------------------------------------------
+# CASO 2. Resultado esperado: El mejor camino es A -> C con coste 10
+# ---------------------------------------------------------------------------------------------
+def caso2_shortest_paths():
+    grafo = g.Grafo()
+    
+    grafo.agregar_arista('A', 'B', 1)   
+    grafo.agregar_arista('B', 'A', 100) 
+    
+    grafo.agregar_arista('B', 'C', 1)
+    grafo.agregar_arista('C', 'B', 100)
+
+    grafo.agregar_arista('A', 'C', 10)
+    grafo.agregar_arista('C', 'A', 10)
+    
+    ejecutar_k_shortest_paths(grafo, 'A', 'C', k=2)
+
+# ---------------------------------------------------------------------------------------------
+# CASO 3. Resultado esperado: El mejor camino es S -> A -> B -> D -> E -> T con coste 23
+# ---------------------------------------------------------------------------------------------
+def caso3_shortest_paths():
+    grafo = g.Grafo()
+    
+    grafo.agregar_arista('S', 'A', 5);  grafo.agregar_arista('A', 'S', 5)
+    grafo.agregar_arista('S', 'B', 10); grafo.agregar_arista('B', 'S', 10)
+    grafo.agregar_arista('S', 'C', 15); grafo.agregar_arista('C', 'S', 15)
+    
+    grafo.agregar_arista('A', 'B', 2); grafo.agregar_arista('B', 'A', 2)
+    
+    grafo.agregar_arista('A', 'D', 10); grafo.agregar_arista('D', 'A', 10)
+    grafo.agregar_arista('B', 'D', 5);  grafo.agregar_arista('D', 'B', 5)
+    grafo.agregar_arista('C', 'E', 5);  grafo.agregar_arista('E', 'C', 5)
+    
+    grafo.agregar_arista('D', 'E', 1);  grafo.agregar_arista('E', 'D', 1)
+    
+    grafo.agregar_arista('D', 'T', 10); grafo.agregar_arista('T', 'D', 10)
+    grafo.agregar_arista('E', 'T', 10); grafo.agregar_arista('T', 'E', 10)
+    
+    ejecutar_k_shortest_paths(grafo, 'S', 'T', k=5)
+
+if __name__ =="__main__":
+    caso1_shortest_paths()
+    caso2_shortest_paths()
+    caso3_shortest_paths()
+

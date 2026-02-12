@@ -48,7 +48,7 @@ def menu_inicial() -> tuple:
         print("4. TM4")
         print("5. TM5")
 
-        trafico_opcion = input("Seleccione el tipo de tráfico: ")
+        trafico_opcion = input("Seleccione el tipo de tráfico: ").strip()
 
         if not trafico_opcion.isdigit():
              print("Error: Debe introducir un número.\n")
@@ -64,3 +64,35 @@ def menu_inicial() -> tuple:
             break
         
     return nombre, trafico
+
+def menu_pruebas() -> int:
+    """
+    Muestra el menú interactivo para seleccionar la prueba a ejecutar. Solicita al usuario que elija una prueba"
+    returns: 
+    int: El número de la prueba seleccionada por el usuario. Devuelve -1 si el usuario elige salir.
+    """
+
+    while True: 
+        print("\n--- MENÚ DE PRUEBAS ---")
+        print("1. Prueba de los k mejores caminos (Shortest Path)")
+        print("2. Prueba de enrutamiento")
+        print("Q. Salir")
+
+        opcion = input("Seleccione la prueba a ejecutar: ").strip()
+
+        if opcion == "Q" or opcion == "q":
+            opcion = 0
+            print ("Saliendo del menú.") 
+            return 0
+        
+        if not opcion.isdigit():
+            print("Error: Debe introducir un número.\n") 
+            continue
+
+        opcion = int(opcion)
+        if opcion > 2 or opcion < 0:
+            print("Opción no válida. Por favor, intente de nuevo.\n") 
+            continue 
+        
+        else:
+            return opcion

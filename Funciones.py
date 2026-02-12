@@ -91,7 +91,7 @@ def yen_k_shortest_paths(graph, source, target, k):
         """
         Encuentra las k rutas más cortas entre el nodo source y el nodo target en el grafo dado utilizando el algoritmo de Yen.
         Argumentos:
-            graph (networkx.Graph): El grafo donde se buscarán las rutas.
+            graph (Grafo): El grafo donde se buscarán las rutas.
             source (node): Nodo de origen.
             target (node): Nodo de destino.
             k (int): Número de rutas más cortas a encontrar.
@@ -158,3 +158,29 @@ def yen_k_shortest_paths(graph, source, target, k):
                 break
 
         return paths
+
+def enrutar(grafo, trafico, k):
+    """
+    Función principal para enrutar el tráfico utilizando el algoritmo de Yen para encontrar las k rutas más cortas.
+
+    Argumentos:
+        grafo (Grafo): Instancia del grafo que representa la topología de la red.
+        trafico (Trafico): Instancia del tráfico que contiene la matriz de tráfico y la matriz restante.
+        k (int): Número de rutas más cortas a encontrar para cada par de nodos.
+    """
+
+    # Recorrer la matriz de trafico para enrutar cada demanda
+    for i in range(len(trafico.matriz_trafico)):
+        for j in range(len(trafico.matriz_trafico[i])):
+            demanda = trafico.matriz_trafico[i][j]
+
+            if demanda > 0:
+                origen = grafo.nodos[i]
+                destino = grafo.nodos[j]
+
+                rutas = yen_k_shortest_paths(grafo, origen, destino, k)
+
+                # Recorrer las rutas. Se analiza las aristas de cada ruta para verificar si se puede enrutar la demanda por esa ruta
+                for ruta in rutas:
+                    for nodo in ruta:
+                        

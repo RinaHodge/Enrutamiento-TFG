@@ -1,7 +1,6 @@
 import Menus
 import ClaseGrafo as g
 import ClaseTrafico as t
-import Pruebas as p
 
 grafo = g.Grafo()       #Crear instancia del grafo
 trafico = t.Trafico()   #Crear instancia del tráfico

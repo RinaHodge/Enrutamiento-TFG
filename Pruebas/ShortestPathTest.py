@@ -1,6 +1,5 @@
-import random
-import ClaseGrafo as g
-import Funciones as f
+from ClaseGrafo import Grafo
+from Funciones import *
 
 def ejecutar_k_shortest_paths(grafo, origen, destino, k):
     
@@ -10,14 +9,14 @@ def ejecutar_k_shortest_paths(grafo, origen, destino, k):
     print(f"{'-'*60}")
 
     grafo.mostrar_diccionario()
-    
-    rutas = f.yen_k_shortest_paths(grafo, origen, destino, k)
+
+    rutas = yen_k_shortest_paths(grafo, origen, destino, k)
     if not rutas:
         print(f"No se encontraron rutas de {origen} a {destino}.")
         return
     
     for i, ruta in enumerate(rutas):
-        coste = f.calcular_coste_ruta(grafo.grafo, ruta)
+        coste = calcular_coste_ruta(grafo.grafo, ruta)
         print(f"Ruta {i + 1}: {' -> '.join(ruta)} | Coste total: {coste}")
     
 
@@ -25,7 +24,7 @@ def ejecutar_k_shortest_paths(grafo, origen, destino, k):
 # CASO 1. Resultado esperado: El mejor camino es S -> B -> T con coste 10
 # ---------------------------------------------------------------------------------------------
 def caso1_shortest_paths():
-    grafo = g.Grafo()
+    grafo = Grafo()
     
     grafo.agregar_arista('S', 'A', 10) 
     grafo.agregar_arista('A', 'S', 50) 
@@ -45,10 +44,10 @@ def caso1_shortest_paths():
     ejecutar_k_shortest_paths(grafo, 'S', 'T', k=3)
 
 # ---------------------------------------------------------------------------------------------
-# CASO 2. Resultado esperado: El mejor camino es A -> C con coste 10
+# CASO 2. Resultado esperado: El mejor camino es A -> B -> C con coste 2
 # ---------------------------------------------------------------------------------------------
 def caso2_shortest_paths():
-    grafo = g.Grafo()
+    grafo = Grafo()
     
     grafo.agregar_arista('A', 'B', 1)   
     grafo.agregar_arista('B', 'A', 100) 
@@ -65,7 +64,7 @@ def caso2_shortest_paths():
 # CASO 3. Resultado esperado: El mejor camino es S -> A -> B -> D -> E -> T con coste 23
 # ---------------------------------------------------------------------------------------------
 def caso3_shortest_paths():
-    grafo = g.Grafo()
+    grafo = Grafo()
     
     grafo.agregar_arista('S', 'A', 5);  grafo.agregar_arista('A', 'S', 5)
     grafo.agregar_arista('S', 'B', 10); grafo.agregar_arista('B', 'S', 10)
@@ -88,4 +87,3 @@ if __name__ =="__main__":
     caso1_shortest_paths()
     caso2_shortest_paths()
     caso3_shortest_paths()
-

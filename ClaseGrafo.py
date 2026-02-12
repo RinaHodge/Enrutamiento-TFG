@@ -3,6 +3,15 @@ class Grafo:
         self.grafo = {}         # Diccionario para almacenar los vértices y sus aristas
         self.num_vertices = 0
 
+    def get_num_vertices(self):
+        """
+        Devuelve el número de vértices en el grafo.
+
+        Returns:
+            int: Número de vértices en el grafo.
+        """
+        return self.num_vertices
+    
     def agregar_arista(self, origen, destino, coste):
         """
         Agrega una arista al grafo con una capacidad dada.

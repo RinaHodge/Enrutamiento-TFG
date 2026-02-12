@@ -169,18 +169,36 @@ def enrutar(grafo, trafico, k):
         k (int): Número de rutas más cortas a encontrar para cada par de nodos.
     """
 
+    # grafo temporal 
+    g_temp = grafo.copiar_grafo()   
     # Recorrer la matriz de trafico para enrutar cada demanda
     for i in range(len(trafico.matriz_trafico)):
         for j in range(len(trafico.matriz_trafico[i])):
             demanda = trafico.matriz_trafico[i][j]
 
             if demanda > 0:
-                origen = grafo.nodos[i]
-                destino = grafo.nodos[j]
+                origen = grafo.mapeo_letra(i)
+                destino = grafo.mapeo_letra(j)
 
-                rutas = yen_k_shortest_paths(grafo, origen, destino, k)
-
+                rutas = yen_k_shortest_paths(g_temp, origen, destino, k)
+                
                 # Recorrer las rutas. Se analiza las aristas de cada ruta para verificar si se puede enrutar la demanda por esa ruta
                 for ruta in rutas:
-                    for nodo in ruta:
+                    for u, v in zip(ruta, ruta[1:]):
+                        if g_temp.get_capacidad_arista(u, v) >= demanda: 
+                           enrutable = True
+                           continue     # Se puede enrutar por esta arista, verificar la siguiente arista de la ruta
+                        else:
+                            enrutable = False
+                            break # No se puede enrutar por esta ruta, intentar la siguiente ruta
+                    
+                    # Enrutar por la ruta si es enrutable, actualizar la capacidad restante en el diccionario
+                    if enrutable:
+                        for u, v in zip(ruta, ruta[1:]): 
+                            capacidad_arista = g_temp.get_capacidad_arista(u, v)
+                            g_temp.update_capacidad_arista(u, v, capacidad_arista - demanda)
+                        print(f"Demanda de {origen} a {destino}: {demanda} enrutable por la ruta: {' -> '.join(ruta)}")
                         
+                        break # Se enruta por la primera ruta enrutable encontrada, no se analizan las siguientes rutas
+                    
+

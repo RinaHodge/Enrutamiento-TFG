@@ -1,5 +1,3 @@
-from asyncio import graph
-
 class Trafico:
     def __init__(self):
         self.matriz_trafico = []    # Matriz de tráfico (lista de listas)
@@ -14,10 +12,10 @@ class Trafico:
             id_trafico (str): Identificador del archivo de tráfico (TM1-TM5).
         """
 
-        if id is not None:
+        if id is None:
             ruta_trafico = f"Topologias/Matrices_Trafico/{nombre_topologia}/{nombre_topologia}{id_trafico}.csv"
         else:
-            ruta_trafico = f"Pruebas/{nombre_topologia}/{nombre_topologia}TM{id_trafico}.csv"
+            ruta_trafico = f"Pruebas/{nombre_topologia}/{nombre_topologia}{id_trafico}.csv"
 
         print(f"Cargando matriz de tráfico desde: {ruta_trafico}")
         try:
@@ -37,7 +35,7 @@ class Trafico:
 
     def inicializar_dicc_restante(self, grafo):
         """
-        Inicializa el diccionario de tráfico restante a partir de la matriz de tráfico y el grafo.
+        Inicializa el diccionario de tráfico restante a partir de la matriz de capacidad y el grafo.
         """
         self.dicc_restante = {}   # Limpiar el diccionario antes de inicializarlo
 
@@ -45,7 +43,17 @@ class Trafico:
             self.dicc_restante[u] = {}
             for v, capacidad in vecinos.items():
                 self.dicc_restante[u][v] = capacidad
-        
+    
+    def get_capacidad_restante(self, origen, destino):
+        """ Obtiene la capacidad restante entre dos nodos. 
+            Argumentos: 
+                origen (str): Nodo de origen. 
+                destino (str): Nodo de destino. 
+            Retorna: 
+                float: Capacidad restante entre el nodo de origen y el nodo de destino. 
+        """ 
+        return self.dicc_restante.get(origen, {}).get(destino, 0)
+    
     def mostrar_matriz_trafico(self):
         """
         Muestra la matriz de tráfico cargada en forma de tablas

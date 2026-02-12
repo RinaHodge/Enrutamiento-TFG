@@ -83,7 +83,3 @@ def caso3_shortest_paths():
     
     ejecutar_k_shortest_paths(grafo, 'S', 'T', k=5)
 
-if __name__ =="__main__":
-    caso1_shortest_paths()
-    caso2_shortest_paths()
-    caso3_shortest_paths()

@@ -12,6 +12,30 @@ class Grafo:
         """
         return self.num_vertices
     
+    def get_capacidad_arista(self,origen, destino):
+        """ Devuelve el coste de la arista entre el nodo de origen y el nodo de destino. 
+        
+            Argumentos: 
+                origen (str): Nodo de origen. 
+                destino (str): Nodo de destino. 
+        
+            Returns: float: Coste de la arista entre el nodo de origen y el nodo de destino. Si no existe la arista, devuelve float('inf'). 
+        """ 
+        if origen in self.grafo and destino in self.grafo[origen]: 
+            return self.grafo[origen][destino] 
+        else: 
+            return float('inf') # Si no existe la arista, se considera un coste infinito
+    
+    def update_capacidad_arista(self, origen, destino, nueva_capacidad):
+        """ Actualiza la capacidad de la arista entre el nodo de origen y el nodo de destino. 
+            Argumentos: 
+                origen (str): Nodo de origen. 
+                destino (str): Nodo de destino. 
+                nueva_capacidad (float): Nueva capacidad para la arista entre el nodo de origen y el nodo de destino. 
+            """ 
+        if origen in self.grafo and destino in self.grafo[origen]: 
+            self.grafo[origen][destino] = nueva_capacidad
+
     def agregar_arista(self, origen, destino, coste):
         """
         Agrega una arista al grafo con una capacidad dada.

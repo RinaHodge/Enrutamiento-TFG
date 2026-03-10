@@ -1,11 +1,11 @@
-import Menus as m
+from src import menus as m
 
-from Pruebas.ShortestPathTest import (
+from Pruebas.shortestPath_test import (
     caso1_shortest_paths,
     caso2_shortest_paths,
     caso3_shortest_paths
 )
-from Pruebas.EnrutamientoTest import (
+from Pruebas.enrutamiento_test import (
     caso1_enrutamiento,caso2_enrutamiento, caso3_enrutamiento, caso4_enrutamiento, caso5_enrutamiento, caso6_enrutamiento)
 
 if __name__ == "__main__":

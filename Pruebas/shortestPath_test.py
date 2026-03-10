@@ -1,5 +1,5 @@
-from ClaseGrafo import Grafo
-from Funciones import *
+from src.clase_grafo import Grafo
+from src.funciones import *
 
 def ejecutar_k_shortest_paths(grafo, origen, destino, k):
     

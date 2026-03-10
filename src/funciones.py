@@ -1,6 +1,6 @@
 import heapq
 
-from ClaseGrafo import Grafo
+from src.clase_grafo import Grafo
 
 def Dijkstra(grafo, nodo_inicio):
     """

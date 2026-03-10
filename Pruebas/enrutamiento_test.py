@@ -1,6 +1,6 @@
-from ClaseGrafo import Grafo
-from Funciones import *
-from ClaseTrafico import Trafico
+from src.clase_grafo import Grafo
+from src.funciones import *
+from src.clase_trafico import Trafico
 
 grafo1 = Grafo()
     

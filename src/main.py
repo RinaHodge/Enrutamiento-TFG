@@ -1,11 +1,11 @@
-import Menus
-import ClaseGrafo as g
-import ClaseTrafico as t
+import menus
+import src.clase_grafo as g
+import src.clase_trafico as t
 
 grafo = g.Grafo()       #Crear instancia del grafo
 trafico = t.Trafico()   #Crear instancia del tráfico
 
-nombre, id_trafico = Menus.menu_inicial()   #Llama al menú inicial para seleccionar topología y tráfico
+nombre, id_trafico = menus.menu_inicial()   #Llama al menú inicial para seleccionar topología y tráfico
 
 if nombre is None and id_trafico is None:
     print("No se seleccionó ninguna topología. Saliendo del programa.")

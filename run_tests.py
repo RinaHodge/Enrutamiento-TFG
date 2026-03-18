@@ -6,7 +6,8 @@ from Pruebas.shortestPath_test import (
     caso3_shortest_paths
 )
 from Pruebas.enrutamiento_test import (
-    caso1_enrutamiento,caso2_enrutamiento, caso3_enrutamiento, caso4_enrutamiento, caso5_enrutamiento, caso6_enrutamiento)
+    caso1_enrutamiento,caso2_enrutamiento, caso3_enrutamiento, caso4_enrutamiento, caso5_enrutamiento, 
+    caso6_enrutamiento, caso7_enrutamiento, caso8_enrutamiento, caso9_enrutamiento)
 
 if __name__ == "__main__":
 
@@ -19,12 +20,17 @@ if __name__ == "__main__":
         caso3_shortest_paths()
     elif opcion == 2:
         print("\nEjecutando prueba de enrutamiento...\n")
+        print ("Ejecutando casos de enrutamiento con grafo1 y diferentes matrices de tráfico...\n")
         caso1_enrutamiento()
         caso2_enrutamiento() 
         caso3_enrutamiento() 
         caso4_enrutamiento() 
         caso5_enrutamiento() 
+        print ("\nEjecutando caso de enrutamiento con grafo2 y diferentes matrices de tráfico...\n")
         caso6_enrutamiento()
+        caso7_enrutamiento()
+        caso8_enrutamiento()
+        caso9_enrutamiento()
     elif opcion == 3: 
         print("\nEjecutando todas las pruebas...\n")
     else:

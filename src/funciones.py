@@ -30,9 +30,10 @@ def Dijkstra(grafo, nodo_inicio):
         
         # Actualizar distancias a los vecinos
         for vecino in grafo[u]:
+            coste_enlace = grafo[u][vecino]['coste']  # Obtener el coste de la arista entre u y su vecino
             # Si el vecino está en Q y se encuentra una ruta más corta
-            if vecino in Q and dist[vecino] > dist[u] + grafo[u][vecino]:
-                dist[vecino] = dist[u] + grafo[u][vecino]  
+            if vecino in Q and dist[vecino] > dist[u] + coste_enlace:
+                dist[vecino] = dist[u] + coste_enlace
                 prev[vecino] = u
 
     return dist, prev
@@ -81,7 +82,7 @@ def calcular_coste_ruta(grafo, ruta):
         destino = ruta[i + 1]
 
         if destino in grafo[origen]:
-            coste_total += grafo[origen][destino]
+            coste_total += grafo[origen][destino]['coste']  # Sumar el coste de la arista entre origen y destino
         else:
             return float('inf')  # Ruta no válida si no hay enlace entre origen y destino
 
@@ -142,7 +143,7 @@ def yen_k_shortest_paths(graph, source, target, k):
                     if spur_path:
                         total_path = root_path[:-1] + spur_path
                         total_weight = sum(
-                            graph.grafo[u][v] for u, v in zip(total_path, total_path[1:])
+                            graph.grafo[u][v]['coste'] for u, v in zip(total_path, total_path[1:])
                         )
                     
                     # Evistar rutas duplicadas
@@ -171,6 +172,7 @@ def enrutar(grafo, trafico, k):
 
     # grafo temporal 
     g_temp = grafo.copiar_grafo()   
+    exito = True
     # Recorrer la matriz de trafico para enrutar cada demanda
     for i in range(len(trafico.matriz_trafico)):
         for j in range(len(trafico.matriz_trafico[i])):
@@ -181,7 +183,13 @@ def enrutar(grafo, trafico, k):
                 destino = grafo.mapeo_letra(j)
 
                 rutas = yen_k_shortest_paths(g_temp, origen, destino, k)
+                # Mostrar las rutas encontradas para la demanda actual
                 
+                #for idx, ruta in enumerate(rutas):
+                #    coste_ruta = calcular_coste_ruta(g_temp.grafo, ruta)
+                #    print(f"Ruta {idx + 1} para demanda de {origen} a {destino}: {' -> '.join(ruta)} con coste total: {coste_ruta}")
+
+                rutas_encontradas = False
                 # Recorrer las rutas. Se analiza las aristas de cada ruta para verificar si se puede enrutar la demanda por esa ruta
                 for ruta in rutas:
                     for u, v in zip(ruta, ruta[1:]):
@@ -199,6 +207,17 @@ def enrutar(grafo, trafico, k):
                             g_temp.update_capacidad_arista(u, v, capacidad_arista - demanda)
                         print(f"Demanda de {origen} a {destino}: {demanda} enrutable por la ruta: {' -> '.join(ruta)}")
                         
+                        print(f"Capacidad disponible actualizada")
+                        rutas_encontradas = True
+                        g_temp.mostrar_matriz_capacidades()
                         break # Se enruta por la primera ruta enrutable encontrada, no se analizan las siguientes rutas
-                    
+                        
+                if not rutas_encontradas:
+                    exito = False
 
+    print("\n" + "="*60)
+    if exito:
+        print(f"Se han enrutado todas las demandas")
+    else:
+        print(f"No se han podido enrutar todas las demandas")
+    print("="*60 + "\n")

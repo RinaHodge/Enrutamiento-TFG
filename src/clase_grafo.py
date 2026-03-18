@@ -22,7 +22,21 @@ class Grafo:
             Returns: float: Coste de la arista entre el nodo de origen y el nodo de destino. Si no existe la arista, devuelve float('inf'). 
         """ 
         if origen in self.grafo and destino in self.grafo[origen]: 
-            return self.grafo[origen][destino] 
+            return self.grafo[origen][destino]['capacidad'] 
+        else: 
+            return float('inf') # Si no existe la arista, se considera un coste infinito
+    
+    def get_coste_arista(self, origen, destino):
+        """ Devuelve el coste de la arista entre el nodo de origen y el nodo de destino. 
+        
+            Argumentos: 
+                origen (str): Nodo de origen. 
+                destino (str): Nodo de destino. 
+        
+            Returns: float: Coste de la arista entre el nodo de origen y el nodo de destino. Si no existe la arista, devuelve float('inf'). 
+        """ 
+        if origen in self.grafo and destino in self.grafo[origen]: 
+            return self.grafo[origen][destino]['coste'] 
         else: 
             return float('inf') # Si no existe la arista, se considera un coste infinito
     
@@ -34,9 +48,9 @@ class Grafo:
                 nueva_capacidad (float): Nueva capacidad para la arista entre el nodo de origen y el nodo de destino. 
             """ 
         if origen in self.grafo and destino in self.grafo[origen]: 
-            self.grafo[origen][destino] = nueva_capacidad
+            self.grafo[origen][destino]['capacidad'] = nueva_capacidad
 
-    def agregar_arista(self, origen, destino, coste):
+    def agregar_arista(self, origen, destino, capacidad, coste=1):
         """
         Agrega una arista al grafo con una capacidad dada.
 
@@ -44,6 +58,7 @@ class Grafo:
             origen (int): Nodo de origen.
             destino (int): Nodo de destino.
             capacidad (float): Capacidad del enlace entre los nodos.
+            coste (float): Coste del enlace entre los nodos.
         """
         if origen not in self.grafo:
             self.grafo[origen] = {}
@@ -51,7 +66,8 @@ class Grafo:
         if destino not in self.grafo:
             self.grafo[destino] = {}
 
-        self.grafo[origen][destino] = coste
+        # Se almacenará el coste inicialmente a 1, ya que se usa el número de saltos como coste
+        self.grafo[origen][destino] = {'capacidad': capacidad, 'coste': coste}  
         self.num_vertices = len(self.grafo)
 
 
@@ -76,11 +92,11 @@ class Grafo:
                     valores = linea.strip().split(',')
 
                     for j, valor in enumerate(valores):         #Procesar la columna
-                        coste = float(valor)
+                        capacidad = float(valor)
 
                         #Si la capacidad es mayor que 0, agregar la arista al grafo. Si es menor, no hay enlace
-                        if coste > 0:
-                            self.agregar_arista(self.mapeo_letra(i), self.mapeo_letra(j), coste)
+                        if capacidad > 0:
+                            self.agregar_arista(self.mapeo_letra(i), self.mapeo_letra(j), capacidad)
         except FileNotFoundError:
             print(f"Error: No se encontró el archivo de capacidades en la ruta: {ruta_capacidades}")
         pass
@@ -131,6 +147,39 @@ class Grafo:
         for origen, vecinos in self.grafo.items():
             print(f"{origen} -> {vecinos}")
 
+    def mostrar_matriz_capacidades(self):
+        """
+        Muestra las capacidades restantes del grafo en formato de matriz 2D (Tabla).
+        """
+        # 1. Obtener todos los nodos únicos y ordenarlos alfabéticamente (A, B, C, D...)
+        nodos = set(self.grafo.keys())
+        for vecinos in self.grafo.values():
+            nodos.update(vecinos.keys())
+        nodos = sorted(list(nodos))
+        
+        ancho = 8 # Ancho fijo para cada columna
+        
+        # 2. Imprimir el encabezado de las columnas
+        encabezado = "    " + "".join([f"{nodo:>{ancho}}" for nodo in nodos])
+        print(encabezado)
+        
+        # 3. Imprimir cada fila con su letra y sus valores
+        for origen in nodos:
+            fila_str = f"{origen:<3}" # Letra de la fila (ej: "A  ")
+            for destino in nodos:
+                capacidad = self.get_capacidad_arista(origen, destino)
+                
+                # Tu función get_capacidad_arista devuelve 'inf' si no hay enlace. 
+                # Para la vista en matriz, es más bonito poner un 0.
+                if capacidad == float('inf'):
+                    capacidad = 0
+                
+                # Formatear el número para que ocupe 8 espacios y quede alineado
+                fila_str += f"{capacidad:>{ancho}.1f}"
+            print(fila_str)
+        print("") # Salto de línea extra al final para que quede limpio
+
+
     def copiar_grafo(grafo):
         """
         Crea una copia del grafo dado.
@@ -143,7 +192,7 @@ class Grafo:
 
         grafo_copia = Grafo()
         for origen, vecinos in grafo.grafo.items():
-            for destino, coste in vecinos.items():
-                grafo_copia.agregar_arista(origen, destino, coste)
+            for destino, atributos in vecinos.items():
+                grafo_copia.agregar_arista(origen, destino, atributos['capacidad'], atributos['coste'])
         return grafo_copia
     

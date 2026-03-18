@@ -41,8 +41,8 @@ class Trafico:
 
         for u, vecinos in grafo.grafo.items():
             self.dicc_restante[u] = {}
-            for v, capacidad in vecinos.items():
-                self.dicc_restante[u][v] = capacidad
+            for v, atributos in vecinos.items():
+                self.dicc_restante[u][v] = atributos['capacidad']
     
     def get_capacidad_restante(self, origen, destino):
         """ Obtiene la capacidad restante entre dos nodos. 
@@ -56,11 +56,35 @@ class Trafico:
     
     def mostrar_matriz_trafico(self):
         """
-        Muestra la matriz de tráfico cargada en forma de tablas
+        Muestra la matriz de tráfico cargada en forma de tabla 2D.
         """
         print("\nMatriz de Tráfico Cargada:")
-        for fila in self.matriz_trafico:
-            print(fila)
+        
+        if not self.matriz_trafico:
+            print("La matriz está vacía.")
+            return
+
+        num_nodos = len(self.matriz_trafico)
+        # Generar las letras para los nodos (A, B, C, D...) automáticamente
+        nodos = [chr(ord('A') + i) for i in range(num_nodos)]
+        
+        ancho = 8  
+        
+        # 1. Imprimir el encabezado de las columnas
+        encabezado = "    " + "".join([f"{nodo:>{ancho}}" for nodo in nodos])
+        print(encabezado)
+        
+        # 2. Imprimir cada fila con su letra y sus valores
+        for i in range(num_nodos):
+            fila_str = f"{nodos[i]:<3} " # Letra de la fila (ej: "A  ")
+            
+            for j in range(num_nodos):
+                valor = self.matriz_trafico[i][j]
+                # Formatear el número para que ocupe el ancho especificado
+                fila_str += f"{valor:>{ancho}.1f}"
+                
+            print(fila_str)
+        print("") # Salto de línea extra al final para que quede limpio
 
     def mostrar_matriz_restante(self):
         """

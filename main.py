@@ -1,4 +1,5 @@
-import menus
+from src.funciones import enrutar
+import src.menus as menus
 import src.clase_grafo as g
 import src.clase_trafico as t
 
@@ -17,7 +18,7 @@ grafo.mostrar_diccionario()
 
 # Cargar la matriz de tráfico y mostrarla
 trafico.cargar_matriz_trafico(nombre, id_trafico)
-# trafico.mostrar_matriz_trafico()
+trafico.mostrar_matriz_trafico()
 
-# Aplicar el algoritmo de encaminamiento (Dijkstra)
+enrutar(grafo, trafico, k = 500)   #Llama a la función de enrutamiento con k=3
 

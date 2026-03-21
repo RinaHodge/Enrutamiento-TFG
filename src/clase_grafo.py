@@ -40,6 +40,20 @@ class Grafo:
         else: 
             return float('inf') # Si no existe la arista, se considera un coste infinito
     
+    def get_probabilidad_perdida(self, origen, destino):
+        """ Devuelve la probabilidad de pérdida de la arista entre el nodo de origen y el nodo de destino. 
+        
+            Argumentos: 
+                origen (str): Nodo de origen. 
+                destino (str): Nodo de destino. 
+        
+            Returns: float: Probabilidad de pérdida de la arista entre el nodo de origen y el nodo de destino. Si no existe la arista, devuelve None.
+        """ 
+        if origen in self.grafo and destino in self.grafo[origen]: 
+            return self.grafo[origen][destino].get('prob_perdida', 0.0) 
+        else: 
+            return None # Si no existe la arista, se considera una probabilidad de pérdida de 0
+        
     def update_capacidad_arista(self, origen, destino, nueva_capacidad):
         """ Actualiza la capacidad de la arista entre el nodo de origen y el nodo de destino. 
             Argumentos: 
@@ -70,7 +84,21 @@ class Grafo:
         self.grafo[origen][destino] = {'capacidad': capacidad, 'coste': coste}  
         self.num_vertices = len(self.grafo)
 
-
+    def set_probabilidad_perdida(self, origen, destino, probabilidad):
+        """
+        Establece la probabilidad de pérdida para una arista específica en el grafo.
+        Por defecto la probabilidad se establecerá en milisegundos. (Por ejemplo, se introduce 1 para 1 ms).
+        
+        Argumentos:
+            origen (str): Nodo de origen.
+            destino (str): Nodo de destino.
+            probabilidad (float): Probabilidad de pérdida para la arista entre el nodo de origen y el nodo de destino.
+        """
+        if origen in self.grafo and destino in self.grafo[origen]:
+            self.grafo[origen][destino]['prob_perdida'] = probabilidad
+        else: 
+            print(f"Error: No se encontró la arista entre {origen} y {destino} para establecer la probabilidad de pérdida.")
+    
     def cargar_desde_archivo(self, nombre_topologia):
         """
         Carga la matriz de capacidades y la matriz de tráfico.
@@ -96,7 +124,7 @@ class Grafo:
 
                         #Si la capacidad es mayor que 0, agregar la arista al grafo. Si es menor, no hay enlace
                         if capacidad > 0:
-                            self.agregar_arista(self.mapeo_letra(i), self.mapeo_letra(j), capacidad)
+                            self.agregar_arista(chr(ord('A') + i), chr(ord('A') + j), capacidad)
         except FileNotFoundError:
             print(f"Error: No se encontró el archivo de capacidades en la ruta: {ruta_capacidades}")
         pass
@@ -127,18 +155,6 @@ class Grafo:
         for origen in grafo.grafo:
             if nodo in grafo.grafo[origen]:
                 del grafo.grafo[origen][nodo]
-
-    def mapeo_letra(self, indice):
-        """
-        Mapea un índice numérico a una letra correspondiente (0 -> A, 1 -> B, etc.).
-
-        Argumentos:
-            indice (int): Índice numérico a mapear.
-
-        Returns:
-            str: Letra correspondiente al índice.
-        """
-        return chr(ord('A') + indice)
     
     def mostrar_diccionario(self):
         """

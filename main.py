@@ -20,5 +20,16 @@ grafo.mostrar_diccionario()
 trafico.cargar_matriz_trafico(nombre, id_trafico)
 trafico.mostrar_matriz_trafico()
 
-enrutar(grafo, trafico, k = 500)   #Llama a la función de enrutamiento con k=3
+
+# Agregar pérdida a los enlaces (opcional, se puede comentar si no se desea agregar pérdida)
+for origen in grafo.grafo:
+    for destino in grafo.grafo[origen]:
+        probabilidad = 1  # Puedes cambiar este valor por el que necesites 
+        grafo.set_probabilidad_perdida(origen, destino, probabilidad)
+
+print("\nGrafo con la probabilidad de pérdida establecida:")
+grafo.mostrar_diccionario()  # Mostrar el grafo con la probabilidad de pérdida establecida
+
+#Con 40 caminos funciona germany hasta TM3
+#enrutar(grafo, trafico, k = 36)   #Llama a la función de enrutamiento con k=3. Con 700 caminos no funciona
 

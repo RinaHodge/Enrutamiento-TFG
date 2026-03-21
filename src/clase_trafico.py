@@ -1,7 +1,10 @@
+from src.funciones import mapeo_letra
+
 class Trafico:
     def __init__(self):
         self.matriz_trafico = []    # Matriz de tráfico (lista de listas)
         self.dicc_restante = {}   # Diccionario para almacenar la matriz restante del tráfico
+        self.lista_demandas = []     # Lista para almacenar las demandas en orden
 
     def cargar_matriz_trafico(self, nombre_topologia, id_trafico, id = None):
         """
@@ -45,7 +48,8 @@ class Trafico:
                 self.dicc_restante[u][v] = atributos['capacidad']
     
     def get_capacidad_restante(self, origen, destino):
-        """ Obtiene la capacidad restante entre dos nodos. 
+        """ 
+        Obtiene la capacidad restante entre dos nodos. 
             Argumentos: 
                 origen (str): Nodo de origen. 
                 destino (str): Nodo de destino. 
@@ -54,6 +58,50 @@ class Trafico:
         """ 
         return self.dicc_restante.get(origen, {}).get(destino, 0)
     
+    def ordenar_capacidad(self):
+        """
+        Ordena el diccionario de tráfico restante por capacidad de mayor a menor dentro de una lista de vectores. 
+        """
+        self.lista_demandas = [] # Limpiar la lista de demandas antes de ordenarla
+
+        for i in range(len(self.matriz_trafico)):
+            for j in range(len(self.matriz_trafico[i])):
+                demanda = self.matriz_trafico[i][j]                 #Obtener la demanda de la matriz de tráfico
+
+                if demanda > 0:                             
+                    origen = mapeo_letra(i)
+                    destino = mapeo_letra(j)
+
+                    origen_destino = [origen, destino]              # Vector que guarda el nodo de origen y el nodo de destino
+                    
+                    self.lista_demandas.append((demanda, origen_destino))   # Agregar la demanda y el vector de origen-destino a la lista de demandas
+                
+        # Ordenar la lista de demandas por demanda de mayor a menor
+        self.lista_demandas.sort(key=lambda x: x[0], reverse=True)
+
+    def mayor_demanda(self):
+        """
+        Obtiene, devuelve y elimina la demanda más alta de la lista (la primera).        
+        Retorna:
+            tuple: (demanda, [origen, destino]) o None si la lista ya está vacía.
+        """
+        if len(self.lista_demandas) > 0:
+            return self.lista_demandas.pop(0)
+        else:
+            return None  # Ya no quedan demandas por procesar
+        
+    def actualizar_matriz_restante(self, origen, destino, demanda):
+        """
+        Actualiza la matriz restante del tráfico después de enrutar una demanda.
+
+        Argumentos:
+            origen (str): Nodo de origen.
+            destino (str): Nodo de destino.
+            demanda (float): Cantidad de tráfico que se ha enrutable por la ruta seleccionada.
+        """
+        if origen in self.dicc_restante and destino in self.dicc_restante[origen]:
+            self.dicc_restante[origen][destino] -= demanda
+        
     def mostrar_matriz_trafico(self):
         """
         Muestra la matriz de tráfico cargada en forma de tabla 2D.
@@ -66,7 +114,7 @@ class Trafico:
 
         num_nodos = len(self.matriz_trafico)
         # Generar las letras para los nodos (A, B, C, D...) automáticamente
-        nodos = [chr(ord('A') + i) for i in range(num_nodos)]
+        nodos = [mapeo_letra(i) for i in range(num_nodos)]
         
         ancho = 8  
         

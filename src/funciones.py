@@ -181,12 +181,16 @@ def enrutar(grafo, trafico, k):
         grafo (Grafo): Instancia del grafo que representa la topología de la red.
         trafico (Trafico): Instancia del tráfico que contiene la matriz de tráfico y la matriz restante.
         k (int): Número de rutas más cortas a encontrar para cada par de nodos.
+
+    Returns:
+        dict: Un diccionario con las rutas guardadas para cada par de nodos.
+        exito (bool): Indica si se han podido enrutar todas las demandas o no.
     """
 
     # grafo temporal 
     g_temp = grafo.copiar_grafo()   
     exito = True
-
+    rutas_guardadas = {}     # Guardará las rutas definitivas por las que se enrutarán. 
     trafico.ordenar_capacidad()  # Ordenar la lista de demandas por demanda de mayor a menor
     # Recorrer la lista de demandas
     while True:
@@ -214,10 +218,11 @@ def enrutar(grafo, trafico, k):
                     capacidad_arista = g_temp.get_capacidad_arista(u, v)
                     g_temp.update_capacidad_arista(u, v, capacidad_arista - demanda)
 
-                print(f"Demanda de {origen} a {destino}: {demanda} enrutable por la ruta: {' -> '.join(ruta)}")
-                print(f"Capacidad disponible actualizada")
+                #print(f"Demanda de {origen} a {destino}: {demanda} enrutable por la ruta: {' -> '.join(ruta)}")
+                #print(f"Capacidad disponible actualizada")
                 rutas_encontradas = True
-                g_temp.mostrar_matriz_capacidades()
+                rutas_guardadas[(origen, destino)] = ruta  # Guardar la ruta por la que se enruta esta demanda
+                #g_temp.mostrar_matriz_capacidades()
                 break # Se enruta por la primera ruta enrutable encontrada, no se analizan las siguientes rutas
                         
         if not rutas_encontradas:
@@ -231,48 +236,86 @@ def enrutar(grafo, trafico, k):
         print(f"No se han podido enrutar todas las demandas")
     print("="*60 + "\n")
 
-    def calcular_accesibilidad(grafo, ruta):
-        """
-        Calcula la probabilidad de que el paquete llegue desde el nodo inicial al nodo final a través de la ruta dada
+    return rutas_guardadas, exito
+
+def calcular_accesibilidad(grafo, ruta):
+    """
+    Calcula la probabilidad de que el paquete llegue desde el nodo inicial al nodo final a través de la ruta dada
         
-        Argumentos:
-            grafo (Grafo): El grafo que contiene las probabilidades de pérdida en sus aristas.
-            ruta (list): Lista que representa la ruta para la cual se desea calcular la accesibilidad.
-        """
-        probabilidad_total = 1  # Inicializar a 1
-        # Recorrer la ruta y multiplicar las probabilidades de pérdida de cada arista
-        for i in range(len(ruta) - 1):
-            origen = ruta[i]
-            siguiente = ruta[i + 1]
+    Argumentos:
+        grafo (Grafo): El grafo que contiene las probabilidades de pérdida en sus aristas.
+        ruta (list): Lista que representa la ruta para la cual se desea calcular la accesibilidad.
+    """
+    probabilidad_total = 1  # Inicializar a 1
+    # Recorrer la ruta y multiplicar las probabilidades de pérdida de cada arista
+    for i in range(len(ruta) - 1):
+        origen = ruta[i]
+        siguiente = ruta[i + 1]
 
-            if siguiente in grafo.grafo[origen]:
-                probabilidad_perdida = grafo.grafo[origen][siguiente].get('probabilidad_perdida', 0)
-                probabilidad_total *= (1 - probabilidad_perdida)  # Multiplicar la probabilidad de éxito (1 - probabilidad de pérdida)
-            else:
-                break  # Si no hay enlace entre origen y siguiente, se detiene el cálculo
+        if siguiente in grafo.grafo[origen]:
+            probabilidad_perdida = grafo.get_probabilidad_perdida(origen, siguiente)  # Obtener la probabilidad de pérdida de la arista entre origen y siguiente
+            probabilidad_total *= (1 - probabilidad_perdida)  # Multiplicar la probabilidad de éxito (1 - probabilidad de pérdida)
+        else:
+            break  # Si no hay enlace entre origen y siguiente, se detiene el cálculo
             
-        return probabilidad_total
+    return probabilidad_total
     
-    def calculo_retardo(grafo, ruta):
-        """
-        Calcula el retardo total de una ruta dada en el grafo.
+def calculo_retardo(ruta, nodo_TA, m, n):
+    """
+    Calcula el retardo total de una ruta dada en el grafo. El retardo para cada arista se asume como 1ms, equivalente al número de saltos. 
 
-        Argumentos:
-            grafo (Grafo): Diccionario que representa el grafo con sus aristas y retardos.
-            ruta (list): Lista que representa la ruta para la cual se desea calcular el retardo.
+    Argumentos:
+        ruta (list): Lista que representa la ruta para la cual se desea calcular el retardo.
+        nodo_TA (str): Nodo TA seleccionado en la ruta.
+        m (int): Número de veces que se ha perdido el paquete antes de llegar al TA
+        n (int): Número de veces que se ha perdido el paquete después de llegar al TA
 
-        Returns:
-            float: Retardo total de la ruta. Si la ruta no es válida, devuelve float('inf').
-        """
-        retardo_total = 0
+    Returns:
+        float: Retardo total de la ruta. Si la ruta no es válida, devuelve float('inf').
+    """
+    retardo_total = 0
+    tiempo_ida = len(ruta) - 1  # El retardo de ida se asume como el número de saltos 
+    tiempo_ida_vuelta = tiempo_ida * 2          # Se asume que es lo mismo al ser la misma ruta: (δs,d + ¯δd,s)
 
-        for i in range(len(ruta) - 1):
-            origen = ruta[i]
-            destino = ruta[i + 1]
+    ruta_desde_TA = ruta[ruta.index(nodo_TA) : ]  # Obtener la subruta desde el TA hasta el nodo de destino
+    tiempo_ida_TA = len(ruta_desde_TA) - 1  
+    tiempo_ida_vuelta_TA = tiempo_ida_TA * 2          # Se asume que es lo mismo al ser la misma ruta: (δd,s + ¯δs,d)
 
-            if destino in grafo.grafo[origen]:
-                retardo_total += grafo.grafo[origen][destino]['retardo']  # Sumar el retardo de la arista entre origen y destino
+    retardo_total = (m * tiempo_ida_vuelta) + (n * tiempo_ida_vuelta_TA) + tiempo_ida
+
+    return retardo_total
+
+def calculo_EPDD(grafo, ruta, nodo_TA, m, n):
+    """
+    Calcula el EPDD de una ruta dada en el grafo.
+
+    Argumentos:
+        grafo (Grafo): El grafo que contiene las probabilidades de pérdida en sus aristas.
+        ruta (list): Lista que representa la ruta para la cual se desea calcular el EPDD.
+        nodo_TA (str): Nodo TA seleccionado en la ruta.
+        m (int): Número de veces que se ha perdido el paquete antes de llegar al TA
+        n (int): Número de veces que se ha perdido el paquete después de llegar al TA
+
+    Returns:
+        float: EPDD total de la ruta. 
+    """
+    epdd = 0
+
+    accesibilidad_hasta_TA = calcular_accesibilidad(grafo, ruta[:ruta.index(nodo_TA) + 1])  # Accesibilidad desde el nodo de origen hasta el TA
+    accesibilidad_desde_TA = calcular_accesibilidad(grafo, ruta[ruta.index(nodo_TA) : ])  # Accesibilidad desde el TA hasta el nodo de destino
+    
+    #print(f"   [Debug] Accesibilidad al TA: {accesibilidad_hasta_TA}")
+    #print(f"   [Debug] Accesibilidad desde el TA: {accesibilidad_desde_TA}")
+
+    for i in range(m):
+        for j in range(n):
+            if accesibilidad_hasta_TA == 1.0 and accesibilidad_desde_TA == 1.0:
+                proba_perdida = 0
             else:
-                return float('inf')  # Ruta no válida si no hay enlace entre origen y destino
+                proba_perdida = ((1 - accesibilidad_hasta_TA) ** i) * accesibilidad_hasta_TA * ((1 - accesibilidad_desde_TA) ** j) * accesibilidad_desde_TA
 
-        return retardo_total
+            retardo = calculo_retardo(ruta, nodo_TA, i, j)
+
+            epdd = epdd + (proba_perdida * retardo)
+
+    return epdd

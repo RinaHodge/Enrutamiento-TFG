@@ -151,3 +151,29 @@ def menu_eleccion_ruta(nodos_disponibles) -> tuple:
         else:
             return nodos_disponibles[origen], nodos_disponibles[destino]
 
+def menu_proba_perdida() -> int:
+    """
+    Muestra el menú interactivo para seleccionar la probabilidad de pérdida a establecer en las aristas del grafo. Solicita al usuario que elija una probabilidad de pérdida para establecer en las aristas del grafo. Valida las entradas para evitar errores."
+    returns: 
+    int: La probabilidad de pérdida seleccionada por el usuario. Devuelve None si el usuario elige salir.
+    """
+
+    while True: 
+        print("\n--- PROBABILIDAD DE PÉRDIDA ---")
+        print("1. Por defecto ")
+        print("2. Random")
+
+        opcion = input("Seleccione la probabilidad de pérdida a establecer en las aristas del grafo: ").strip()
+        
+        if not opcion.isdigit():
+            print("Error: Debe introducir un número.\n") 
+            continue
+
+        opcion = int(opcion)
+        if opcion > 2 or opcion < 0:
+            print("Opción no válida. Por favor, intente de nuevo.\n") 
+            continue 
+        else: 
+            break
+        
+    return opcion

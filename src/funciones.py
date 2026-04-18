@@ -319,3 +319,28 @@ def calculo_EPDD(grafo, ruta, nodo_TA, m, n):
             epdd = epdd + (proba_perdida * retardo)
 
     return epdd
+
+def calculo_EPDD_optimo(grafo, ruta, n, m): 
+    """
+    Calcula el EPDD óptimo de una ruta dada en el grafo, considerando el nodo TA que minimiza el EPDD.
+
+    Argumentos:
+        grafo (Grafo): El grafo que contiene las probabilidades de pérdida en sus aristas.
+        ruta (list): Lista que representa la ruta para la cual se desea calcular el EPDD óptimo.
+    Returns:
+        tuple: EPDD óptimo de la ruta y el nodo óptimo donde está el TA que minimiza el EPDD.
+    """
+
+    nodo_optimo = None              # Nodo optimo donde está el TA que minimiza el EPDD
+    epdd_optimo = float('inf')      # Inicializar el EPDD óptimo a infinito para encontrar el mínimo
+
+    for nodo in ruta:
+        epdd_actual = calculo_EPDD(grafo, ruta, nodo, n, m)  # Calcular el EPDD con el nodo TA actual
+        
+        print(f"   [Debug] EPDD calculado con TA en el nodo {nodo}: {epdd_actual}")
+        # Ver si el EPDD calculado con el nodo TA actual es menor que el EPDD óptimo encontrado hasta ahora
+        if epdd_actual < epdd_optimo:
+            epdd_optimo = epdd_actual
+            nodo_optimo = nodo
+    
+    return nodo_optimo, epdd_optimo

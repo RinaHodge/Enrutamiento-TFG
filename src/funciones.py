@@ -260,11 +260,12 @@ def calcular_accesibilidad(grafo, ruta):
             
     return probabilidad_total
     
-def calculo_retardo(ruta, nodo_TA, m, n):
+def calculo_retardo(grafo, ruta, nodo_TA, m, n):
     """
-    Calcula el retardo total de una ruta dada en el grafo. El retardo para cada arista se asume como 1ms, equivalente al número de saltos. 
+    Calcula el retardo total de una ruta dada en el grafo. El retardo para cada arista se recupera a partir del grafo. 
 
     Argumentos:
+        grafo (Grafo): El grafo que contiene los delays en sus aristas.
         ruta (list): Lista que representa la ruta para la cual se desea calcular el retardo.
         nodo_TA (str): Nodo TA seleccionado en la ruta.
         m (int): Número de veces que se ha perdido el paquete antes de llegar al TA
@@ -274,11 +275,21 @@ def calculo_retardo(ruta, nodo_TA, m, n):
         float: Retardo total de la ruta. Si la ruta no es válida, devuelve float('inf').
     """
     retardo_total = 0
-    tiempo_ida = len(ruta) - 1  # El retardo de ida se asume como el número de saltos 
+    tiempo_ida = 0
+
+    for i in range (len(ruta) - 1):
+        tiempo_ida += grafo.get_delay(ruta[i], ruta[i + 1])  # Sumar el delay de cada arista en la ruta para calcular el retardo de ida
+
+    #tiempo_ida = len(ruta) - 1  # El retardo de ida se asume como el número de saltos 
     tiempo_ida_vuelta = tiempo_ida * 2          # Se asume que es lo mismo al ser la misma ruta: (δs,d + ¯δd,s)
 
     ruta_desde_TA = ruta[ruta.index(nodo_TA) : ]  # Obtener la subruta desde el TA hasta el nodo de destino
-    tiempo_ida_TA = len(ruta_desde_TA) - 1  
+    
+    tiempo_ida_TA = 0
+    for i in range (len(ruta_desde_TA) - 1):
+        tiempo_ida_TA += grafo.get_delay(ruta_desde_TA[i], ruta_desde_TA[i + 1])  # Sumar el delay de cada arista en la subruta desde el TA para calcular el retardo de ida desde el TA
+        
+    # tiempo_ida_TA = len(ruta_desde_TA) - 1  
     tiempo_ida_vuelta_TA = tiempo_ida_TA * 2          # Se asume que es lo mismo al ser la misma ruta: (δd,s + ¯δs,d)
 
     retardo_total = (m * tiempo_ida_vuelta) + (n * tiempo_ida_vuelta_TA) + tiempo_ida
@@ -314,7 +325,7 @@ def calculo_EPDD(grafo, ruta, nodo_TA, m, n):
             else:
                 proba_perdida = ((1 - accesibilidad_hasta_TA) ** i) * accesibilidad_hasta_TA * ((1 - accesibilidad_desde_TA) ** j) * accesibilidad_desde_TA
 
-            retardo = calculo_retardo(ruta, nodo_TA, i, j)
+            retardo = calculo_retardo(grafo, ruta, nodo_TA, i, j)
 
             epdd = epdd + (proba_perdida * retardo)
 

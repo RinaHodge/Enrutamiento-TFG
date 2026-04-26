@@ -21,27 +21,47 @@ grafo.mostrar_diccionario()
 trafico.cargar_matriz_trafico(nombre, id_trafico)
 trafico.mostrar_matriz_trafico()
 
+# -----------------------------------------------------------------------------------------------------------
+#                       PROBABILIDAD DE PÉRDIDA Y DELAY EN LAS ARISTAS DEL GRAFO
+# -----------------------------------------------------------------------------------------------------------
 probabilidad_perdida = menus.menu_proba_perdida()
+delay_elegido = menus.menu_delay()
 
 if probabilidad_perdida == 1:
     print("\nHa seleccionado establecer una probabilidad de pérdida para las aristas.")
-else: 
+elif probabilidad_perdida == 2:
     print("\nHa seleccionado establecer una probabilidad de pérdida aleatoria para las aristas.")
+
+if delay_elegido == 1:
+    print("\nHa seleccionado establecer un delay predeterminado (1ms) para las aristas.")
+elif delay_elegido == 2:
+    print("\nHa seleccionado establecer un delay aleatorio (1ms-10ms) para las aristas.")
 
 for origen in grafo.grafo:
     for destino in grafo.grafo[origen]:
         if probabilidad_perdida == 1:
-            probabilidad = 0.05 # probabilidad de perdida del 5%
+            probabilidad = 0.1 # probabilidad de perdida del 10%
         else:
             probabilidad = round(random.uniform(0.0, 0.1), 2)  # Generar una probabilidad de pérdida aleatoria entre 0% y 10%
         grafo.set_probabilidad_perdida(origen, destino, probabilidad)
 
-print("\nGrafo con la probabilidad de pérdida establecida:")
-grafo.mostrar_diccionario()  # Mostrar el grafo con la probabilidad de pérdida establecida
+        #Establcer el delay
+        if delay_elegido == 1:
+            delay = 1 # delay predeterminado de 1ms
+        else:
+            delay = random.randint(1, 10)  # Generar un delay aleatorio entre 1ms y 10ms
+        grafo.set_delay(origen, destino, delay)
+
+print("\nGrafo con la probabilidad de pérdida y delay establecidos:")
+
+grafo.mostrar_diccionario()  # Mostrar el grafo con la probabilidad de pérdida y delay establecidos
 
 #Con 40 caminos funciona germany hasta TM3
 rutas_guardadas, exito = enrutar(grafo, trafico, k = 36)   # Llama a la función de enrutamiento con k=3. Con 700 caminos no funciona
 
+# ------------------------------------------------------------------------------------------------------------
+#                      SELECCIÓN DE EPDD Y NODO TA PARA CALCULAR EL EPDD
+# -------------------------------------------------------------------------------------------------------------
 epdd_elegido = menus.menu_epdd()
 nodos_disponibles = list(grafo.grafo.keys())
 primer_nodo, ultimo_nodo = menus.menu_eleccion_ruta(nodos_disponibles)

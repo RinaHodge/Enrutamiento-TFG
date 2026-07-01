@@ -65,6 +65,37 @@ def menu_inicial() -> tuple:
         
     return nombre, trafico
 
+def menu_enrutamiento() -> int:
+    """
+    Muestra el menú interactivo para seleccionar el tipo de enrutamiento a ejecutar. Solicita al usuario que elija un tipo de enrutamiento para ejecutar. Valida las entradas para evitar errores."
+    returns: 
+    int: El número del tipo de enrutamiento seleccionado por el usuario. Devuelve None si el usuario elige salir.
+    """
+
+    while True: 
+        print("\n--- ENRUTAMIENTO ---")
+        print("1. Enrutamiento con el número de saltos.")
+        print("2. Enrutamiento con el delay mínimo por flujo. ")
+        print("Q. Salir")
+
+        opcion = input("Seleccione el tipo de enrutamiento a ejecutar: ").strip()
+
+        if opcion == "Q" or opcion == "q":
+            opcion = 0
+            print ("Saliendo del menú.") 
+            return 0
+        
+        if not opcion.isdigit():
+            print("Error: Debe introducir un número.\n") 
+            continue
+
+        opcion = int(opcion)
+        if opcion > 2 or opcion < 0:
+            print("Opción no válida. Por favor, intente de nuevo.\n") 
+            continue 
+        
+        else:
+            return opcion
 def menu_pruebas() -> int:
     """
     Muestra el menú interactivo para seleccionar la prueba a ejecutar. Solicita al usuario que elija una prueba"
@@ -76,6 +107,7 @@ def menu_pruebas() -> int:
         print("\n--- MENÚ DE PRUEBAS ---")
         print("1. Prueba de los k mejores caminos (Shortest Path)")
         print("2. Prueba de enrutamiento")
+        print("3. Prueba de cálculo de EPDD")
         print("Q. Salir")
 
         opcion = input("Seleccione la prueba a ejecutar: ").strip()
@@ -90,7 +122,7 @@ def menu_pruebas() -> int:
             continue
 
         opcion = int(opcion)
-        if opcion > 2 or opcion < 0:
+        if opcion > 3 or opcion < 0:
             print("Opción no válida. Por favor, intente de nuevo.\n") 
             continue 
         
@@ -160,7 +192,7 @@ def menu_proba_perdida() -> int:
 
     while True: 
         print("\n--- PROBABILIDAD DE PÉRDIDA ---")
-        print("1. Por defecto ")
+        print("1. Por defecto (10%)")
         print("2. Random (0% - 10%)")
 
         opcion = input("Seleccione la probabilidad de pérdida a establecer en las aristas del grafo: ").strip()
@@ -187,7 +219,7 @@ def menu_delay() -> int:
 
     while True: 
         print("\n--- DELAY ---")
-        print("1. Por defecto ")
+        print("1. Por defecto (1ms)")
         print("2. Random (1ms - 10ms)")
 
         opcion = input("Seleccione el tipo de delay a establecer en las aristas del grafo: ").strip()

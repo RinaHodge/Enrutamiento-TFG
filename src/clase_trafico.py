@@ -13,6 +13,7 @@ class Trafico:
         Argumentos:
             nombre_topologia (str): Nombre de la topología elegida.
             id_trafico (str): Identificador del archivo de tráfico (TM1-TM5).
+            id (str, opcional): Identificador de la prueba (si se está cargando desde la carpeta Pruebas). Por defecto es None.
         """
 
         if id is None:

@@ -1,7 +1,7 @@
 from src.clase_grafo import Grafo
 from src.funciones import *
 
-def ejecutar_k_shortest_paths(grafo, origen, destino, k):
+def ejecutar_k_shortest_paths(grafo, origen, destino, k, tipo_enrutamiento = 1):
     
     print(f"\n{'='*60}")
     print(f"PRUEBA: Algoritmo de los {k} mejores caminos (Yen's K-Shortest Paths)")
@@ -10,7 +10,7 @@ def ejecutar_k_shortest_paths(grafo, origen, destino, k):
 
     grafo.mostrar_diccionario()
 
-    rutas = yen_k_shortest_paths(grafo, origen, destino, k)
+    rutas = yen_k_shortest_paths(grafo, origen, destino, k, tipo_enrutamiento = tipo_enrutamiento)
     if not rutas:
         print(f"No se encontraron rutas de {origen} a {destino}.")
         return
@@ -41,7 +41,7 @@ def caso1_shortest_paths():
     grafo.agregar_arista('S', 'T', 100)
     grafo.agregar_arista('T', 'S', 100)
     
-    ejecutar_k_shortest_paths(grafo, 'S', 'T', k=3)
+    ejecutar_k_shortest_paths(grafo, 'S', 'T', k=3, tipo_enrutamiento=1)
 
 # ---------------------------------------------------------------------------------------------
 # CASO 2. Resultado esperado: El mejor camino es A -> B -> C con coste 2
@@ -58,7 +58,7 @@ def caso2_shortest_paths():
     grafo.agregar_arista('A', 'C', 10)
     grafo.agregar_arista('C', 'A', 10)
     
-    ejecutar_k_shortest_paths(grafo, 'A', 'C', k=2)
+    ejecutar_k_shortest_paths(grafo, 'A', 'C', k=2, tipo_enrutamiento=1)
 
 # ---------------------------------------------------------------------------------------------
 # CASO 3. Resultado esperado: El mejor camino es S -> A -> B -> D -> E -> T con coste 23
@@ -81,5 +81,5 @@ def caso3_shortest_paths():
     grafo.agregar_arista('D', 'T', 10); grafo.agregar_arista('T', 'D', 10)
     grafo.agregar_arista('E', 'T', 10); grafo.agregar_arista('T', 'E', 10)
     
-    ejecutar_k_shortest_paths(grafo, 'S', 'T', k=5)
+    ejecutar_k_shortest_paths(grafo, 'S', 'T', k=5, tipo_enrutamiento=1)
 

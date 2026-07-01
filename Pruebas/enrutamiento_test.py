@@ -208,6 +208,8 @@ def caso_enrutamientoDelay():
             
             print(f"{origen} a {destino}: {camino_formateado:<25} | Delay: {delay_total} ms")
         print("-" * 60)
+
+    #Mostrar los resultados se ha hechio con ayuda de gemini
 def caso_enrutamiento_abilene_real():
     print("\n" + "="*50)
     print("Caso 11: Enrutamiento Abilene con delays reales")
@@ -233,7 +235,7 @@ def caso_enrutamiento_abilene_real():
                         nodo_destino = f"S{j + 1}"
                         grafo_abilene.set_delay(nodo_origen, nodo_destino, delay)
     except FileNotFoundError:
-        print(f"❌ Error: No se encontró el CSV en {ruta_abilene}. Ajusta la ruta en el test.")
+        print(f"Error: No se encontró el CSV en {ruta_abilene}. Ajusta la ruta en el test.")
         return
 
     rutas_guardadas, exito = enrutar(grafo_abilene, trafico_abilene, k = 7, tipo_enrutamiento=2)

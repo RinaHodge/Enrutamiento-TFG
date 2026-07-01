@@ -18,7 +18,7 @@ def convertir_letra_a_switch(letra):
     
     return letra  
 
-# Script para modificae el CSV de Abilene_v2.csv a Abilene_v3.csv. Generado por Gemini.
+# Script para modificar el CSV de Abilene_v2.csv a Abilene_v3.csv. Generado por Gemini.
 
 archivo_entrada = 'Abilene_v2.csv'  # Archivo original 
 archivo_salida = 'Abilene_v3.csv'   

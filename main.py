@@ -9,9 +9,13 @@ trafico = t.Trafico()   #Crear instancia del tráfico
 
 nombre, id_trafico = menus.menu_inicial()   #Llama al menú inicial para seleccionar topología y tráfico
 
-enrutamiento_elegido = menus.menu_enrutamiento()
 if nombre is None and id_trafico is None:
     print("No se seleccionó ninguna topología. Saliendo del programa.")
+    exit()
+
+enrutamiento_elegido = menus.menu_enrutamiento()
+if enrutamiento_elegido == 0:
+    print("Saliendo del programa.")
     exit()
 
 # Cargar la topología y mostrar el grafo cargado
@@ -30,7 +34,7 @@ delay_elegido = menus.menu_delay()
 
 # Si intenta usar el CSV de delays reales pero NO está en Abilene, le avisamos y forzamos el modo aleatorio
 if enrutamiento_elegido == 2 and delay_elegido == 1 and nombre != "Abilene":
-    print(f"\n⚠️ AVISO: Los datos de delay reales (CSV) solo están disponibles para la topología Abilene.")
+    print(f"\nAVISO: Los datos de delay reales (CSV) solo están disponibles para la topología Abilene.")
     print(f"Como ha seleccionado {nombre}, se aplicarán delays aleatorios (1-10ms) para que la red funcione.")
     delay_elegido = 2  # Forzamos a que genere los aleatorios y no busque el CSV
 

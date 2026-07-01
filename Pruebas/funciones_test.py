@@ -1,5 +1,6 @@
 from src.funciones import *
 
+# Los resultados epserados se han calculado con ayuda de Gemini. 
 def test_calculo_retardo():
     # ===============================
     # CASO 1: Prueba controlada 
@@ -29,17 +30,13 @@ def test_calculo_retardo():
     #Los EPDD esperados son (python agrega decimales por el formato de impresión)
     #EPDD en S1: 2.5434
     #EPDD en S2: 2.494
-    #EPDD en S3: 
+    #EPDD en S3: 2.5434
 
     nodo_TA1, epdd_optimo1 = calculo_EPDD_optimo(g, ruta1, n = 2, m = 2)
     print(f"El nodo TA calculado para el grafo 1 es: {nodo_TA1} con un EPDD de: {epdd_optimo1}")
     
     # ===============================
-    # CASO 2: Prueba controlada, 0% de pérdidas (probabilidad de pérdida = 0). 
-    # ===============================
-    
-    # ===============================
-    # CASO 3: Prueba controlada, asimetría
+    # CASO 2: Prueba controlada, asimetría
     # ===============================
     # Crear el grafo
     g3 = Grafo()
@@ -62,9 +59,9 @@ def test_calculo_retardo():
 
     ruta3 = ["S1", "S2", "S3"]
     #Los EPDD esperados son (python agrega decimales por el formato de impresión)
-    #EPDD en S1:
-    #EPDD en S2: 
-    #EPDD en S3: 
+    #EPDD en S1: 19.8612
+    #EPDD en S2: 17.8200
+    #EPDD en S3: 19.8612
 
     nodo_TA3, epdd_optimo3 = calculo_EPDD_optimo(g3, ruta3, n = 2, m = 2)
     print(f"El nodo TA calculado para el grafo 3 es: {nodo_TA3} con un EPDD de: {epdd_optimo3}")

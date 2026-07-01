@@ -1,6 +1,6 @@
 # Enrutamiento y Posicionamiento Óptimo del Transport Assistant (TA) mediante Machine Learning
 
-Este repositorio/carpeta contiene el código fuente desarrollado para el Trabajo de Fin de Grado (TFG). El objetivo principal del software es simular entornos de redes, calcular el Expected Packet Delivery Delay (EPDD) bajo condiciones de pérdida y retardo, y generar conjuntos de datos (datasets) para entrenar modelos de Machine Learning que predigan el nodo óptimo donde posicionar la función de red TA (Transport Assistant).
+Este repositorio/carpeta (https://github.com/RinaHodge/Enrutamiento-TFG.git) contiene el código fuente desarrollado para el Trabajo de Fin de Grado (TFG). El objetivo principal del software es simular entornos de redes, calcular el Expected Packet Delivery Delay (EPDD) bajo condiciones de pérdida y retardo, y generar conjuntos de datos (datasets) para entrenar modelos de Machine Learning que predigan el nodo óptimo donde posicionar la función de red TA (Transport Assistant).
 
 ## 📁 Estructura del Proyecto
 

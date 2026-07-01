@@ -12,15 +12,16 @@ def mapeo_letra(indice):
     Returns:
         str: Letra correspondiente al índice.
     """
-    return chr(ord('A') + indice)
+    return f"S{indice + 1}"
 
 
-def Dijkstra(grafo, nodo_inicio):
+def Dijkstra(grafo, nodo_inicio, tipo_enrutamiento):
     """
     Implementa el algoritmo de Dijkstra para encontrar las rutas más cortas desde un nodo de inicio.
     Argumentos:
         grafo (dict): Diccionario que representa el grafo con sus aristas y costes.
         nodo_inicio (str): Nodo desde el cual se calculan las rutas más cortas.
+        tipo_enrutamiento (int): Tipo de enrutamiento seleccionado (1 para número de saltos, 2 para el delay).
     Returns:
         dist (dict): Diccionario con las distancias mínimas desde el nodo de inicio a cada nodo.
         prev (dict): Diccionario con los predecesores de cada nodo en la ruta más corta.
@@ -43,7 +44,10 @@ def Dijkstra(grafo, nodo_inicio):
         
         # Actualizar distancias a los vecinos
         for vecino in grafo[u]:
-            coste_enlace = grafo[u][vecino]['coste']  # Obtener el coste de la arista entre u y su vecino
+            if tipo_enrutamiento == 1: # Enrutamiento por número de saltos
+                coste_enlace = 1  # El coste de cada arista se considera como 1 para el enrutamiento por número de saltos
+            else:
+                coste_enlace = grafo[u][vecino]['delay']  # Obtener el coste de la arista entre u y su vecino
             # Si el vecino está en Q y se encuentra una ruta más corta
             if vecino in Q and dist[vecino] > dist[u] + coste_enlace:
                 dist[vecino] = dist[u] + coste_enlace
@@ -101,7 +105,7 @@ def calcular_coste_ruta(grafo, ruta):
 
     return coste_total
 
-def yen_k_shortest_paths(graph, source, target, k):
+def yen_k_shortest_paths(graph, source, target, k, tipo_enrutamiento):
         """
         Encuentra las k rutas más cortas entre el nodo source y el nodo target en el grafo dado utilizando el algoritmo de Yen.
         Argumentos:
@@ -109,8 +113,9 @@ def yen_k_shortest_paths(graph, source, target, k):
             source (node): Nodo de origen.
             target (node): Nodo de destino.
             k (int): Número de rutas más cortas a encontrar.
+            tipo_enrutamiento (int): Tipo de enrutamiento seleccionado (1 para número de saltos, 2 para el delay).
         Returns:
-            list: Una lista de listas, donde cada sublista representa una ruta desde source hasta target.
+            paths: Una lista de listas, donde cada sublista representa una ruta desde source hasta target.
         """
 
         if source == target:
@@ -119,7 +124,7 @@ def yen_k_shortest_paths(graph, source, target, k):
         paths = []
         potential_paths = []
 
-        dist, prev = Dijkstra(graph.grafo, source)
+        dist, prev = Dijkstra(graph.grafo, source, tipo_enrutamiento)  # Obtener la ruta más corta utilizando Dijkstra como base para Yen
         
         # Primer camino más corto usando Dijkstra
         try:
@@ -149,7 +154,7 @@ def yen_k_shortest_paths(graph, source, target, k):
                 for node in root_path[:-1]:
                     g_copy.eliminar_nodo(node)
                 try:
-                    dist_spur, prev_spur = Dijkstra(g_copy.grafo, spur_node)
+                    dist_spur, prev_spur = Dijkstra(g_copy.grafo, spur_node, tipo_enrutamiento)
                     spur_path = reconstruir_ruta(prev_spur, spur_node, target)
                     
                     # Verificar si se encontró un camino spur
@@ -173,7 +178,7 @@ def yen_k_shortest_paths(graph, source, target, k):
 
         return paths
 
-def enrutar(grafo, trafico, k):
+def enrutar(grafo, trafico, k, tipo_enrutamiento):
     """
     Función principal para enrutar el tráfico utilizando el algoritmo de Yen para encontrar las k rutas más cortas.
 
@@ -181,9 +186,10 @@ def enrutar(grafo, trafico, k):
         grafo (Grafo): Instancia del grafo que representa la topología de la red.
         trafico (Trafico): Instancia del tráfico que contiene la matriz de tráfico y la matriz restante.
         k (int): Número de rutas más cortas a encontrar para cada par de nodos.
+        tipo_enrutamiento (int): Tipo de enrutamiento seleccionado (1 para número de saltos, 2 para el delay).
 
     Returns:
-        dict: Un diccionario con las rutas guardadas para cada par de nodos.
+        rutas_guardadas (dict): Un diccionario con las rutas guardadas para cada par de nodos.
         exito (bool): Indica si se han podido enrutar todas las demandas o no.
     """
 
@@ -200,7 +206,7 @@ def enrutar(grafo, trafico, k):
         demanda, (origen, destino) = demanda_info
 
         # Calcular las rutas
-        rutas = yen_k_shortest_paths(g_temp, origen, destino, k)
+        rutas = yen_k_shortest_paths(g_temp, origen, destino, k, tipo_enrutamiento)  # Obtener las k rutas más cortas entre origen y destino
         rutas_encontradas = False
         # Recorrer las rutas. Se analiza las aristas de cada ruta para verificar si se puede enrutar la demanda por esa ruta
         for ruta in rutas:
@@ -245,6 +251,9 @@ def calcular_accesibilidad(grafo, ruta):
     Argumentos:
         grafo (Grafo): El grafo que contiene las probabilidades de pérdida en sus aristas.
         ruta (list): Lista que representa la ruta para la cual se desea calcular la accesibilidad.
+
+    Returns:
+        probabilidad_total (float): Probabilidad de que el paquete llegue desde el nodo inicial al nodo final a través de la ruta dada.
     """
     probabilidad_total = 1  # Inicializar a 1
     # Recorrer la ruta y multiplicar las probabilidades de pérdida de cada arista
@@ -260,26 +269,41 @@ def calcular_accesibilidad(grafo, ruta):
             
     return probabilidad_total
     
-def calculo_retardo(ruta, nodo_TA, m, n):
+def calculo_retardo(grafo, ruta, nodo_TA, m, n):
     """
-    Calcula el retardo total de una ruta dada en el grafo. El retardo para cada arista se asume como 1ms, equivalente al número de saltos. 
+    Calcula el retardo total de una ruta dada en el grafo. El retardo para cada arista se recupera a partir del grafo. 
 
     Argumentos:
+        grafo (Grafo): El grafo que contiene los delays en sus aristas.
         ruta (list): Lista que representa la ruta para la cual se desea calcular el retardo.
         nodo_TA (str): Nodo TA seleccionado en la ruta.
         m (int): Número de veces que se ha perdido el paquete antes de llegar al TA
         n (int): Número de veces que se ha perdido el paquete después de llegar al TA
 
     Returns:
-        float: Retardo total de la ruta. Si la ruta no es válida, devuelve float('inf').
+        retardo_total (float): Retardo total de la ruta. Si la ruta no es válida, devuelve float('inf').
     """
     retardo_total = 0
-    tiempo_ida = len(ruta) - 1  # El retardo de ida se asume como el número de saltos 
-    tiempo_ida_vuelta = tiempo_ida * 2          # Se asume que es lo mismo al ser la misma ruta: (δs,d + ¯δd,s)
+    tiempo_ida = 0
+    tiempo_vuelta = 0
+
+    for i in range (len(ruta) - 1):
+        tiempo_ida += grafo.get_delay(ruta[i], ruta[i + 1])  # Sumar el delay de cada arista en la ruta para calcular el retardo de ida
+        tiempo_vuelta += grafo.get_delay(ruta[i + 1], ruta[i])  # Sumar el delay de cada arista en la ruta para calcular el retardo de vuelta
+
+    #tiempo_ida = len(ruta) - 1  # El retardo de ida se asume como el número de saltos 
+    tiempo_ida_vuelta = tiempo_ida + tiempo_vuelta         
 
     ruta_desde_TA = ruta[ruta.index(nodo_TA) : ]  # Obtener la subruta desde el TA hasta el nodo de destino
-    tiempo_ida_TA = len(ruta_desde_TA) - 1  
-    tiempo_ida_vuelta_TA = tiempo_ida_TA * 2          # Se asume que es lo mismo al ser la misma ruta: (δd,s + ¯δs,d)
+    
+    tiempo_ida_TA = 0
+    tiempo_vuelta_TA = 0
+    for i in range (len(ruta_desde_TA) - 1):
+        tiempo_ida_TA += grafo.get_delay(ruta_desde_TA[i], ruta_desde_TA[i + 1])  # Sumar el delay de cada arista en la subruta desde el TA para calcular el retardo de ida desde el TA
+        tiempo_vuelta_TA += grafo.get_delay(ruta_desde_TA[i + 1], ruta_desde_TA[i])  # Sumar el delay de cada arista en la subruta desde el TA para calcular el retardo de vuelta desde el TA
+
+    # tiempo_ida_TA = len(ruta_desde_TA) - 1  -
+    tiempo_ida_vuelta_TA = tiempo_ida_TA + tiempo_vuelta_TA          # Se asume que es lo mismo al ser la misma ruta: (δd,s + ¯δs,d)
 
     retardo_total = (m * tiempo_ida_vuelta) + (n * tiempo_ida_vuelta_TA) + tiempo_ida
 
@@ -297,7 +321,7 @@ def calculo_EPDD(grafo, ruta, nodo_TA, m, n):
         n (int): Número de veces que se ha perdido el paquete después de llegar al TA
 
     Returns:
-        float: EPDD total de la ruta. 
+        epdd (float): EPDD total de la ruta. 
     """
     epdd = 0
 
@@ -314,10 +338,11 @@ def calculo_EPDD(grafo, ruta, nodo_TA, m, n):
             else:
                 proba_perdida = ((1 - accesibilidad_hasta_TA) ** i) * accesibilidad_hasta_TA * ((1 - accesibilidad_desde_TA) ** j) * accesibilidad_desde_TA
 
-            retardo = calculo_retardo(ruta, nodo_TA, i, j)
-
+            retardo = calculo_retardo(grafo, ruta, nodo_TA, i, j)
+            #print(f"   [Debug] Retardo calculado con TA en el nodo {nodo_TA}, i={i}, j={j}: {retardo}")
             epdd = epdd + (proba_perdida * retardo)
-
+            #print(f"   [Debug] EPDD parcial con TA en el nodo {nodo_TA}, i={i}, j={j}: {epdd}")
+            
     return epdd
 
 def calculo_EPDD_optimo(grafo, ruta, n, m): 
@@ -337,10 +362,10 @@ def calculo_EPDD_optimo(grafo, ruta, n, m):
     for nodo in ruta:
         epdd_actual = calculo_EPDD(grafo, ruta, nodo, n, m)  # Calcular el EPDD con el nodo TA actual
         
-        print(f"   [Debug] EPDD calculado con TA en el nodo {nodo}: {epdd_actual}")
+        #print(f"   [Debug] EPDD calculado con TA en el nodo {nodo}: {epdd_actual}")
         # Ver si el EPDD calculado con el nodo TA actual es menor que el EPDD óptimo encontrado hasta ahora
         if epdd_actual < epdd_optimo:
             epdd_optimo = epdd_actual
             nodo_optimo = nodo
-    
+
     return nodo_optimo, epdd_optimo

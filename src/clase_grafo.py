@@ -2,6 +2,7 @@ class Grafo:
     def __init__(self):
         self.grafo = {}         # Diccionario para almacenar los vértices y sus aristas
         self.num_vertices = 0
+        self.num_aristas = 0
 
     def get_num_vertices(self):
         """
@@ -11,6 +12,15 @@ class Grafo:
             int: Número de vértices en el grafo.
         """
         return self.num_vertices
+    
+    def get_num_aristas(self):
+        """
+        Devuelve el número de aristas en el grafo.
+
+        Returns:
+            int: Número de aristas en el grafo.
+        """
+        return self.num_aristas
     
     def get_capacidad_arista(self,origen, destino):
         """ Devuelve el coste de la arista entre el nodo de origen y el nodo de destino. 
@@ -53,7 +63,21 @@ class Grafo:
             return self.grafo[origen][destino].get('prob_perdida', 0.0) 
         else: 
             return None # Si no existe la arista, se considera una probabilidad de pérdida de 0
+    
+    def get_delay(self, origen, destino):
+        """ Devuelve el delay de la arista entre el nodo de origen y el nodo de destino. 
         
+            Argumentos: 
+                origen (str): Nodo de origen. 
+                destino (str): Nodo de destino. 
+        
+            Returns: float: Delay de la arista entre el nodo de origen y el nodo de destino. Si no existe la arista, devuelve None.
+        """ 
+        if origen in self.grafo and destino in self.grafo[origen]: 
+            return self.grafo[origen][destino].get('delay', 0.0) 
+        else: 
+            return None # Si no existe la arista, se considera un delay de 0
+    
     def update_capacidad_arista(self, origen, destino, nueva_capacidad):
         """ Actualiza la capacidad de la arista entre el nodo de origen y el nodo de destino. 
             Argumentos: 
@@ -80,9 +104,10 @@ class Grafo:
         if destino not in self.grafo:
             self.grafo[destino] = {}
 
-        # Se almacenará el coste inicialmente a 1, ya que se usa el número de saltos como coste
         self.grafo[origen][destino] = {'capacidad': capacidad, 'coste': coste}  
         self.num_vertices = len(self.grafo)
+        
+        self.num_aristas += 1
 
     def set_probabilidad_perdida(self, origen, destino, probabilidad):
         """
@@ -98,6 +123,22 @@ class Grafo:
             self.grafo[origen][destino]['prob_perdida'] = probabilidad
         else: 
             print(f"Error: No se encontró la arista entre {origen} y {destino} para establecer la probabilidad de pérdida.")
+    
+    def set_delay(self, origen, destino, delay):
+        """
+        Establece el delay para una arista específica en el grafo.
+        Por defecto el delay se establecerá en milisegundos. (Por ejemplo, se introduce 1 para 1 ms).
+        
+        Argumentos:
+            origen (str): Nodo de origen.
+            destino (str): Nodo de destino.
+            delay (float): Delay para la arista entre el nodo de origen y el nodo de destino.
+        """
+        if origen in self.grafo and destino in self.grafo[origen]:
+            self.grafo[origen][destino]['delay'] = delay
+        else: 
+            print(f"Error: No se encontró la arista entre {origen} y {destino} para establecer el delay.")
+
     
     def cargar_desde_archivo(self, nombre_topologia):
         """
@@ -124,7 +165,7 @@ class Grafo:
 
                         #Si la capacidad es mayor que 0, agregar la arista al grafo. Si es menor, no hay enlace
                         if capacidad > 0:
-                            self.agregar_arista(chr(ord('A') + i), chr(ord('A') + j), capacidad)
+                            self.agregar_arista(f"S{i + 1}", f"S{j + 1}", capacidad)
         except FileNotFoundError:
             print(f"Error: No se encontró el archivo de capacidades en la ruta: {ruta_capacidades}")
         pass
@@ -171,7 +212,7 @@ class Grafo:
         nodos = set(self.grafo.keys())
         for vecinos in self.grafo.values():
             nodos.update(vecinos.keys())
-        nodos = sorted(list(nodos))
+        nodos = sorted(list(nodos), key=lambda x: int(x[1:]))
         
         ancho = 8 # Ancho fijo para cada columna
         
@@ -181,7 +222,7 @@ class Grafo:
         
         # 3. Imprimir cada fila con su letra y sus valores
         for origen in nodos:
-            fila_str = f"{origen:<3}" # Letra de la fila (ej: "A  ")
+            fila_str = f"{origen:<3}" 
             for destino in nodos:
                 capacidad = self.get_capacidad_arista(origen, destino)
                 
@@ -210,5 +251,9 @@ class Grafo:
         for origen, vecinos in grafo.grafo.items():
             for destino, atributos in vecinos.items():
                 grafo_copia.agregar_arista(origen, destino, atributos['capacidad'], atributos['coste'])
+
+                if 'delay' in atributos:
+                    grafo_copia.set_delay(origen, destino, atributos['delay'])
+
         return grafo_copia
     

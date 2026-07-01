@@ -7,7 +7,12 @@ from Pruebas.shortestPath_test import (
 )
 from Pruebas.enrutamiento_test import (
     caso1_enrutamiento,caso2_enrutamiento, caso3_enrutamiento, caso4_enrutamiento, caso5_enrutamiento, 
-    caso6_enrutamiento, caso7_enrutamiento, caso8_enrutamiento, caso9_enrutamiento)
+    caso6_enrutamiento, caso7_enrutamiento, caso8_enrutamiento, caso9_enrutamiento, 
+    caso_enrutamientoDelay, caso_enrutamiento_abilene_real)
+
+from Pruebas.funciones_test import (
+    test_calculo_retardo
+)
 
 if __name__ == "__main__":
 
@@ -31,7 +36,11 @@ if __name__ == "__main__":
         caso7_enrutamiento()
         caso8_enrutamiento()
         caso9_enrutamiento()
+        print("\nEjecutando caso de enrutamiento con delays aleatorios...\n")
+        caso_enrutamientoDelay()
+        caso_enrutamiento_abilene_real()
     elif opcion == 3: 
-        print("\nEjecutando todas las pruebas...\n")
+        print("\nEjecutando prueba de cálculo de EPDD...\n")
+        test_calculo_retardo()
     else:
         print("Saliendo del programa.")

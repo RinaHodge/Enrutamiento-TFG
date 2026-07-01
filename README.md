@@ -4,7 +4,7 @@ Este repositorio/carpeta (https://github.com/RinaHodge/Enrutamiento-TFG.git) con
 
 ## 📁 Estructura del Proyecto
 
-El código está organizado de forma y con el paradigma de la Programación Orientada a Objetos
+El código está organizado de forma modular y con el paradigma de la Programación Orientada a Objetos
 
 * **`src/`**: Contiene el núcleo lógico del simulador.
     * `clase_grafo.py`: Gestión de la topología de red (nodos, aristas, retardos, pérdidas).
